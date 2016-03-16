@@ -1,0 +1,1 @@
+Follow setup-git guide
