@@ -59,6 +59,7 @@ type v2Puller struct {
 
 func (p *v2Puller) Pull(ctx context.Context, ref reference.Named) (err error) {
 	// TODO(tiborvass): was ReceiveTimeout
+	logrus.Debugf("DEBUG MESSAGE - V2 Puller")
 	p.repo, p.confirmedV2, err = NewV2Repository(ctx, p.repoInfo, p.endpoint, p.config.MetaHeaders, p.config.AuthConfig, "pull")
 	if err != nil {
 		logrus.Warnf("Error getting v2 registry: %v", err)
@@ -637,6 +638,7 @@ func (p *v2Puller) pullManifestList(ctx context.Context, ref reference.Named, mf
 	}
 
 	manifestRef, err := reference.WithDigest(ref, manifestDigest)
+	fmt.Printf("DEBUG MESSAGE - Manifest ref: %+v\n", manifestRef)
 	if err != nil {
 		return "", "", err
 	}
@@ -679,6 +681,7 @@ func (p *v2Puller) pullSchema2ImageConfig(ctx context.Context, dgst digest.Diges
 		logrus.Error(err)
 		return nil, err
 	}
+	fmt.Printf("DEBUG MESSAGE - schema2 image config json: %+v\n", configJSON)
 
 	return configJSON, nil
 }

@@ -79,6 +79,7 @@ func newPuller(endpoint registry.APIEndpoint, repoInfo *registry.RepositoryInfo,
 func Pull(ctx context.Context, ref reference.Named, imagePullConfig *ImagePullConfig) error {
 	// Resolve the Repository name from fqn to RepositoryInfo
 	repoInfo, err := imagePullConfig.RegistryService.ResolveRepository(ref)
+	logrus.Debugf("DEBUG MESSAGE - PULL REPO INFO: (%+v)", repoInfo)
 	if err != nil {
 		return err
 	}
@@ -88,7 +89,9 @@ func Pull(ctx context.Context, ref reference.Named, imagePullConfig *ImagePullCo
 		return err
 	}
 
+	logrus.Debugf("DEBUG MESSAGE - PULL REPO INFO HOST NAME: %s", repoInfo.Hostname)
 	endpoints, err := imagePullConfig.RegistryService.LookupPullEndpoints(repoInfo.Hostname())
+	logrus.Debugf("DEBUG MESSAGE - ENDPOINTS: %+v", endpoints)
 	if err != nil {
 		return err
 	}
@@ -116,6 +119,7 @@ func Pull(ctx context.Context, ref reference.Named, imagePullConfig *ImagePullCo
 		confirmedTLSRegistries = make(map[string]struct{})
 	)
 	for _, endpoint := range endpoints {
+		logrus.Debugf("DEBUG MESSAGE - ENDPOINT: %+v", endpoint)
 		if confirmedV2 && endpoint.Version == registry.APIVersion1 {
 			logrus.Debugf("Skipping v1 endpoint %s because v2 registry was detected", endpoint.URL)
 			continue
@@ -130,6 +134,7 @@ func Pull(ctx context.Context, ref reference.Named, imagePullConfig *ImagePullCo
 
 		logrus.Debugf("Trying to pull %s from %s %s", repoInfo.Name(), endpoint.URL, endpoint.Version)
 
+		logrus.Debugf("DEBUG MESSAGE - ENDPOINT VERSION: %s", endpoint.Version)
 		puller, err := newPuller(endpoint, repoInfo, imagePullConfig)
 		if err != nil {
 			lastErr = err

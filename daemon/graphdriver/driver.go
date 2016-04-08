@@ -111,11 +111,13 @@ type FileGetCloser interface {
 }
 
 func init() {
+	logrus.Debugf("DEBUG MESSAGE - pkg graphdriver - driver init")
 	drivers = make(map[string]InitFunc)
 }
 
 // Register registers a InitFunc for the driver.
 func Register(name string, initFunc InitFunc) error {
+	fmt.Printf("DEBUG MESSAGE - Register initFunc for driver: %s", name)
 	if _, exists := drivers[name]; exists {
 		return fmt.Errorf("Name already registered %s", name)
 	}
@@ -126,6 +128,8 @@ func Register(name string, initFunc InitFunc) error {
 
 // GetDriver initializes and returns the registered driver
 func GetDriver(name, home string, options []string, uidMaps, gidMaps []idtools.IDMap) (Driver, error) {
+	logrus.Debugf("DEBUG MESSAGE - driver name: %s", name)
+	logrus.Debugf("DEBUG MESSAGE - drivers: (%+v)", drivers)
 	if initFunc, exists := drivers[name]; exists {
 		return initFunc(filepath.Join(home, name), options, uidMaps, gidMaps)
 	}
@@ -147,6 +151,7 @@ func getBuiltinDriver(name, home string, options []string, uidMaps, gidMaps []id
 
 // New creates the driver and initializes it at the specified root.
 func New(root string, name string, options []string, uidMaps, gidMaps []idtools.IDMap) (Driver, error) {
+	logrus.Debugf("DEBUG MESSAGE - Root: %s, name: %s, options: (%+v), uidMaps: (%+v), gidMaps: (%+v)", root, name, options, uidMaps, gidMaps)
 	if name != "" {
 		logrus.Debugf("[graphdriver] trying provided driver %q", name) // so the logs show specified driver
 		return GetDriver(name, root, options, uidMaps, gidMaps)
@@ -155,6 +160,7 @@ func New(root string, name string, options []string, uidMaps, gidMaps []idtools.
 	// Guess for prior driver
 	driversMap := scanPriorDrivers(root)
 	for _, name := range priority {
+		logrus.Debugf("DEBUG MESSAGE - priority name: %s", name)
 		if name == "vfs" {
 			// don't use vfs even if there is state present.
 			continue
@@ -224,11 +230,13 @@ func isDriverNotSupported(err error) bool {
 func scanPriorDrivers(root string) map[string]bool {
 	driversMap := make(map[string]bool)
 
+	logrus.Debugf("DEBUG MESSAGE - drivers: (%+v)", drivers)
 	for driver := range drivers {
 		p := filepath.Join(root, driver)
 		if _, err := os.Stat(p); err == nil && driver != "vfs" {
 			driversMap[driver] = true
 		}
 	}
+	logrus.Debugf("DEBUG MESSAGE - prior drivers: (%+v)", driversMap)
 	return driversMap
 }

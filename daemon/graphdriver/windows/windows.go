@@ -17,6 +17,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/Sirupsen/logrus"
+
 	"github.com/Microsoft/go-winio"
 	"github.com/Microsoft/go-winio/archive/tar"
 	"github.com/Microsoft/go-winio/backuptar"
@@ -32,6 +34,7 @@ import (
 
 // init registers the windows graph drivers to the register.
 func init() {
+	logrus.Debugf("DEBUG MESSAGE - pkg graphdriver - windows init")
 	graphdriver.Register("windowsfilter", InitFilter)
 	graphdriver.Register("windowsdiff", InitDiff)
 }

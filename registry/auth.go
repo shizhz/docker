@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"strings"
 	"time"
@@ -229,17 +230,24 @@ func PingV2Registry(endpoint APIEndpoint, transport http.RoundTripper) (auth.Cha
 		Timeout:   15 * time.Second,
 	}
 	endpointStr := strings.TrimRight(endpoint.URL.String(), "/") + "/v2/"
+	fmt.Printf("DEBUG MESSAGE - ping endpint str: %s\n", endpointStr)
 	req, err := http.NewRequest("GET", endpointStr, nil)
 	if err != nil {
 		return nil, false, err
 	}
+	dump, err := httputil.DumpRequest(req, true)
+	fmt.Printf("\nDEBUG MESSAGE - DUMP REQ: %q\n", dump)
+	fmt.Printf("\nDEBUG MESSAGE - REQ HEADERS: %+v\n", req.Header)
 	resp, err := pingClient.Do(req)
 	if err != nil {
 		return nil, false, err
 	}
 	defer resp.Body.Close()
+	resdump, err := httputil.DumpResponse(resp, true)
+	fmt.Printf("\nDEBUG MESSAGE - DUMP RES: %q\n", resdump)
 
 	versions := auth.APIVersions(resp, DefaultRegistryVersionHeader)
+	fmt.Printf("\nDEBUG MESSAGE - versions: %+v\n", versions)
 	for _, pingVersion := range versions {
 		if pingVersion == v2Version {
 			// The version header indicates we're definitely

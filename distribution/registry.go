@@ -38,6 +38,8 @@ func (dcs dumbCredentialStore) SetRefreshToken(*url.URL, string, string) {
 // remote API version.
 func NewV2Repository(ctx context.Context, repoInfo *registry.RepositoryInfo, endpoint registry.APIEndpoint, metaHeaders http.Header, authConfig *types.AuthConfig, actions ...string) (repo distribution.Repository, foundVersion bool, err error) {
 	repoName := repoInfo.FullName()
+	fmt.Printf("DEBUG MESSAGE - V2Repository repoInfo: %+v\n", repoInfo)
+	fmt.Printf("DEBUG MESSAGE - V2Repository repoName: %s\n", repoName)
 	// If endpoint does not support CanonicalName, use the RemoteName instead
 	if endpoint.TrimHostname {
 		repoName = repoInfo.RemoteName()
@@ -57,7 +59,11 @@ func NewV2Repository(ctx context.Context, repoInfo *registry.RepositoryInfo, end
 		DisableKeepAlives: true,
 	}
 
+	fmt.Printf("\nDEBUG MESSAGE - tls config : %+v\n", endpoint.TLSConfig)
+	fmt.Printf("\nDEBUG MESSAGE - auth config: %+v\n", authConfig)
+	fmt.Printf("\nDEBUG MESSAGE - META HEADERS: %+v\n", metaHeaders)
 	modifiers := registry.DockerHeaders(dockerversion.DockerUserAgent(), metaHeaders)
+	fmt.Printf("DEBUG MESSAGE - Ping modifiers: %+v\n", modifiers)
 	authTransport := transport.NewTransport(base, modifiers...)
 
 	challengeManager, foundVersion, err := registry.PingV2Registry(endpoint, authTransport)
@@ -104,6 +110,8 @@ func NewV2Repository(ctx context.Context, repoInfo *registry.RepositoryInfo, end
 			transportOK: true,
 		}
 	}
+
+	fmt.Printf("DEBUG MESSAGE - endpoint url: %s\n", endpoint.URL.String())
 
 	repo, err = client.NewRepository(ctx, repoNameRef, endpoint.URL.String(), tr)
 	if err != nil {

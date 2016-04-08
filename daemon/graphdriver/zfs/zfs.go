@@ -34,6 +34,7 @@ type zfsOptions struct {
 }
 
 func init() {
+	logrus.Debugf("DEBUG MESSAGE - pkg graphdriver - zfs init")
 	graphdriver.Register("zfs", Init)
 }
 

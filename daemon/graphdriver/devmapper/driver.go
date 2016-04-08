@@ -19,6 +19,7 @@ import (
 )
 
 func init() {
+	logrus.Debugf("DEBUG MESSAGE - pkg graphdriver - device mapper init")
 	graphdriver.Register("devicemapper", Init)
 }
 

@@ -561,8 +561,9 @@ func (container *Container) AddMountPointWithVolume(destination string, vol volu
 		Name:        vol.Name(),
 		Driver:      vol.DriverName(),
 		Destination: destination,
-		RW:          rw,
-		Volume:      vol,
+
+		RW:     rw,
+		Volume: vol,
 	}
 }
 

@@ -8,7 +8,9 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
+	"runtime/debug"
 	"strconv"
 	"time"
 
@@ -394,6 +396,8 @@ func (o etagOption) Apply(ms distribution.ManifestService) error {
 }
 
 func (ms *manifests) Get(ctx context.Context, dgst digest.Digest, options ...distribution.ManifestServiceOption) (distribution.Manifest, error) {
+	fmt.Printf("DEBUG MESSAGE - Manifests get method call stack: \n")
+	debug.PrintStack()
 	var (
 		digestOrTag string
 		ref         reference.Named
@@ -404,6 +408,7 @@ func (ms *manifests) Get(ctx context.Context, dgst digest.Digest, options ...dis
 		if opt, ok := option.(withTagOption); ok {
 			digestOrTag = opt.tag
 			ref, err = reference.WithTag(ms.name, opt.tag)
+			fmt.Printf("DEBUG MESSAGE - Manifests GET ref: %+v", ref)
 			if err != nil {
 				return nil, err
 			}
@@ -424,6 +429,7 @@ func (ms *manifests) Get(ctx context.Context, dgst digest.Digest, options ...dis
 	}
 
 	u, err := ms.ub.BuildManifestURL(ref)
+	fmt.Printf("DEBUG MESSAGE - Mnaifest URL: %s", u)
 	if err != nil {
 		return nil, err
 	}
@@ -434,12 +440,17 @@ func (ms *manifests) Get(ctx context.Context, dgst digest.Digest, options ...dis
 	}
 
 	for _, t := range distribution.ManifestMediaTypes() {
+		fmt.Printf("DEBUG MESSAGE - Mnaifest Media Types: %s", t)
 		req.Header.Add("Accept", t)
 	}
 
 	if _, ok := ms.etags[digestOrTag]; ok {
 		req.Header.Set("If-None-Match", ms.etags[digestOrTag])
 	}
+
+	reqdump, err := httputil.DumpRequest(r, true)
+	fmt.Printf("DEBUG MESSAGE - manifest req dump: %q", dump)
+	fmt.Printf("DEBUG MESSAGE - manifest req headers: %+v", r.Header)
 
 	resp, err := ms.client.Do(req)
 	if err != nil {
@@ -450,11 +461,14 @@ func (ms *manifests) Get(ctx context.Context, dgst digest.Digest, options ...dis
 		return nil, distribution.ErrManifestNotModified
 	} else if SuccessStatus(resp.StatusCode) {
 		mt := resp.Header.Get("Content-Type")
+		fmt.Printf("DEBUG MESSAGE - manifest content type: %s", mt)
 		body, err := ioutil.ReadAll(resp.Body)
+		fmt.Printf("DEBUG MESSAGE - manifest body: %s", string(body[:]))
 
 		if err != nil {
 			return nil, err
 		}
+
 		m, _, err := distribution.UnmarshalManifest(mt, body)
 		if err != nil {
 			return nil, err

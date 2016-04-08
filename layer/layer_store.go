@@ -58,6 +58,8 @@ func NewStoreFromOptions(options StoreOptions) (Store, error) {
 	}
 	logrus.Debugf("Using graph driver %s", driver)
 
+	logrus.Debugf("DEBUG MESSAGE - store options: %+v", options)
+	logrus.Debugf("DEBUG MESSAGE - metadata store path temp: %s", options.MetadataStorePathTemplate)
 	fms, err := NewFSMetadataStore(fmt.Sprintf(options.MetadataStorePathTemplate, driver))
 	if err != nil {
 		return nil, err
@@ -78,6 +80,7 @@ func NewStoreFromGraphDriver(store MetadataStore, driver graphdriver.Driver) (St
 	}
 
 	ids, mounts, err := store.List()
+	logrus.Debugf("DEBUG MESSAGE - ids: (%+v), mounts: (%+v)\n", ids, mounts)
 	if err != nil {
 		return nil, err
 	}

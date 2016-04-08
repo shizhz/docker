@@ -61,6 +61,8 @@ var (
 )
 
 func init() {
+	logrus.Debugf("DEBUG MESSAGE - graphdriver - aufs init")
+	println("AUFS INIT FUNCTION")
 	graphdriver.Register("aufs", Init)
 }
 
@@ -151,6 +153,7 @@ func supportsAufs() error {
 	// We can try to modprobe aufs first before looking at
 	// proc/filesystems for when aufs is supported
 	exec.Command("modprobe", "aufs").Run()
+	fmt.Printf("DEBUG MESSAGE - supportsAufs called")
 
 	f, err := os.Open("/proc/filesystems")
 	if err != nil {

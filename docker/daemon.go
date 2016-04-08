@@ -237,7 +237,7 @@ func (cli *DaemonCli) CmdDaemon(args ...string) error {
 	}
 
 	api := apiserver.New(serverConfig)
-
+	logrus.Debugf("CONFIG HOSTS: (%+v)", cli.Config.Hosts)
 	for i := 0; i < len(cli.Config.Hosts); i++ {
 		var err error
 		if cli.Config.Hosts[i], err = opts.ParseHost(cli.Config.TLS, cli.Config.Hosts[i]); err != nil {
@@ -245,6 +245,7 @@ func (cli *DaemonCli) CmdDaemon(args ...string) error {
 		}
 
 		protoAddr := cli.Config.Hosts[i]
+		logrus.Debugf("PROTO_ADDR: %s", protoAddr)
 		protoAddrParts := strings.SplitN(protoAddr, "://", 2)
 		if len(protoAddrParts) != 2 {
 			logrus.Fatalf("bad format %s, expected PROTO://ADDR", protoAddr)

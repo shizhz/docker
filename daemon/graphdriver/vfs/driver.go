@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/docker/docker/daemon/graphdriver"
 	"github.com/docker/docker/pkg/chrootarchive"
 	"github.com/docker/docker/pkg/idtools"
@@ -18,6 +19,7 @@ var (
 )
 
 func init() {
+	logrus.Debugf("DEBUG MESSAGE - pkg graphdriver - vfs init")
 	graphdriver.Register("vfs", Init)
 }
 

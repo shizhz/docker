@@ -62,6 +62,7 @@ func NewImageStore(fs StoreBackend, ls LayerGetReleaser) (Store, error) {
 
 func (is *store) restore() error {
 	err := is.fs.Walk(func(id ID) error {
+		logrus.Debugf("DEBUG MESSAGE - restore id: %s", id)
 		img, err := is.Get(id)
 		if err != nil {
 			logrus.Errorf("invalid image %v, %v", id, err)

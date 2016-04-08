@@ -18,6 +18,7 @@ import (
 	"syscall"
 	"unsafe"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/docker/docker/daemon/graphdriver"
 	"github.com/docker/docker/pkg/idtools"
 	"github.com/docker/docker/pkg/mount"
@@ -25,6 +26,7 @@ import (
 )
 
 func init() {
+	logrus.Debugf("DEBUG MESSAGE - graphdriver - btrfs init")
 	graphdriver.Register("btrfs", Init)
 }
 

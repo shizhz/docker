@@ -121,6 +121,7 @@ func NewDockerCli(in io.ReadCloser, out, err io.Writer, clientFlags *cli.ClientF
 	}
 
 	cli.init = func() error {
+		fmt.Fprintln(cli.out, "CLI INIT FUNCTION")
 		clientFlags.PostParse()
 		configFile, e := cliconfig.Load(cliconfig.ConfigDir())
 		if e != nil {
@@ -146,6 +147,10 @@ func NewDockerCli(in io.ReadCloser, out, err io.Writer, clientFlags *cli.ClientF
 		if tmpStr := os.Getenv("DOCKER_API_VERSION"); tmpStr != "" {
 			verStr = tmpStr
 		}
+
+		fmt.Fprintf(cli.out, "%s - %s\n", "DEBUG MESSAGE")
+		fmt.Fprintf(cli.out, "(%+v)\n", clientFlags)
+		fmt.Fprintf(cli.out, "SERVER HOST: %s\n", host)
 
 		httpClient, err := newHTTPClient(host, clientFlags.Common.TLSOptions)
 		if err != nil {

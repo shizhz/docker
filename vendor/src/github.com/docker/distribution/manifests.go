@@ -102,6 +102,7 @@ func UnmarshalManifest(ctHeader string, p []byte) (Manifest, Descriptor, error) 
 	}
 
 	unmarshalFunc, ok := mappings[mediatype]
+	fmt.Printf("DEBUG MESSAGE - mediatype function mappings: %+v", mappings)
 	if !ok {
 		unmarshalFunc, ok = mappings[""]
 		if !ok {

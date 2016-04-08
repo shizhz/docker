@@ -682,6 +682,7 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
 		logrus.Warnf("Failed to configure golang's threads limit: %v", err)
 	}
 
+	logrus.Debugf("DEBUG MESSAGE - daemon repo: %s", config.Root)
 	daemonRepo := filepath.Join(config.Root, "containers")
 	if err := idtools.MkdirAllAs(daemonRepo, 0700, rootUID, rootGID); err != nil && !os.IsExist(err) {
 		return nil, err
@@ -704,6 +705,7 @@ func NewDaemon(config *Config, registryService *registry.Service) (daemon *Daemo
 	}
 
 	graphDriver := d.layerStore.DriverName()
+	logrus.Debugf("DEBUG MESSAGE - graph driver: %s", graphDriver)
 	imageRoot := filepath.Join(config.Root, "image", graphDriver)
 
 	// Configure and validate the kernels security support

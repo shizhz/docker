@@ -108,6 +108,7 @@ type Driver struct {
 var backingFs = "<unknown>"
 
 func init() {
+	logrus.Debugf("DEBUG MESSAGE - pkg graphdriver - overlay init")
 	graphdriver.Register("overlay", Init)
 }
 

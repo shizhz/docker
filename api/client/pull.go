@@ -48,10 +48,14 @@ func (cli *DockerCli) CmdPull(args ...string) error {
 		tag = x.Tag()
 	}
 
+	fmt.Fprintf(cli.out, "PULL TAG: %s\n", tag)
 	ref := registry.ParseReference(tag)
+	fmt.Fprintf(cli.out, "PULL REF: %+v\n", ref)
 
 	// Resolve the Repository name from fqn to RepositoryInfo
+	fmt.Fprintf(cli.out, "DISTRIBUTION REF: %+v\n", distributionRef)
 	repoInfo, err := registry.ParseRepositoryInfo(distributionRef)
+	fmt.Fprintf(cli.out, "REPO INFO: %+v\n", repoInfo)
 	if err != nil {
 		return err
 	}
@@ -61,6 +65,7 @@ func (cli *DockerCli) CmdPull(args ...string) error {
 
 	if isTrusted() && !ref.HasDigest() {
 		// Check if tag is digest
+		fmt.Fprintf(cli.out, "DEBUG MESSAGE - %s", "is trusted and has no digest")
 		return cli.trustedPull(repoInfo, ref, authConfig, requestPrivilege)
 	}
 
@@ -68,6 +73,8 @@ func (cli *DockerCli) CmdPull(args ...string) error {
 }
 
 func (cli *DockerCli) imagePullPrivileged(authConfig types.AuthConfig, imageID, tag string, requestPrivilege client.RequestPrivilegeFunc) error {
+
+	fmt.Fprintf(cli.out, "imagePullPrivileged - imageID: %s", imageID)
 
 	encodedAuth, err := encodeAuthToBase64(authConfig)
 	if err != nil {

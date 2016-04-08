@@ -56,7 +56,8 @@ func newFSStore(root string) (*fs, error) {
 
 func (s *fs) contentFile(id ID) string {
 	dgst := digest.Digest(id)
-	return filepath.Join(s.root, contentDirName, string(dgst.Algorithm()), dgst.Hex())
+	contentFile := filepath.Join(s.root, contentDirName, string(dgst.Algorithm()), dgst.Hex())
+	return contentFile
 }
 
 func (s *fs) metadataDir(id ID) string {

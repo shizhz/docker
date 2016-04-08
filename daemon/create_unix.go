@@ -29,6 +29,7 @@ func (daemon *Daemon) createContainerPlatformSpecificSettings(container *contain
 	for spec := range config.Volumes {
 		name := stringid.GenerateNonCryptoID()
 		destination := filepath.Clean(spec)
+		logrus.Debugf("DEBUG MESSAGE - Create container volumes, destination: %s", destination)
 
 		// Skip volumes for which we already have something mounted on that
 		// destination because of a --volume-from.
